@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ImageData {
+  createdAt        DateTime          @default(now())
+  detectionResults DetectionResult[]
+  filePath         Json?
+  id               String            @id @default(cuid())
+  updatedAt        DateTime          @updatedAt
+  uploadedAt       DateTime?
+}
+
+model ModelMetadata {
+  createdAt        DateTime          @default(now())
+  detectionResults DetectionResult[]
+  id               String            @id @default(cuid())
+  parameters       Json?
+  trainedAt        DateTime?
+  updatedAt        DateTime          @updatedAt
+  version          String?
+}
+
+model DetectionResult {
+  createdAt       DateTime       @default(now())
+  detectionScore  Float?
+  id              String         @id @default(cuid())
+  imageData       ImageData?     @relation(fields: [imageDataId], references: [id])
+  imageDataId     String?
+  isTumorDetected Boolean?
+  modelMetadata   ModelMetadata? @relation(fields: [modelMetadataId], references: [id])
+  modelMetadataId String?
+  updatedAt       DateTime       @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
